@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraWave Studio - 2K Audio Visualizer</title>
+    <!-- Tailwind CSS for modern responsive design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for futuristic, professional typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome for crisp modern iconography -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #08070b;
+        }
+        .font-futuristic {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .font-sub {
+            font-family: 'Rajdhani', sans-serif;
+        }
+        /* Custom scrollbar for control panels */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 12, 30, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(139, 92, 246, 0.4);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(139, 92, 246, 0.7);
+        }
+        /* Glow animation effects */
+        .neon-glow {
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+        }
+        .glow-text {
+            text-shadow: 0 0 10px currentColor;
+        }
+    </style>
+</head>
+<body class="text-gray-100 min-h-screen flex flex-col overflow-x-hidden">
+
+    <!-- Modern Navigation Bar -->
+    <header class="border-b border-violet-950/40 bg-black/40 backdrop-blur-md px-6 py-4 flex flex-wrap justify-between items-center gap-4 z-10">
+        <div class="flex items-center gap-3">
+            <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-violet-600 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-violet-500/20">
+                <i class="fa-solid fa-compact-disc text-xl text-white animate-spin-slow"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold font-futuristic tracking-wider bg-gradient-to-r from-white via-violet-200 to-violet-400 bg-clip-text text-transparent">AURAWAVE STUDIO</h1>
+                <p class="text-xs text-violet-400/80 font-sub tracking-widest uppercase">2K Ultra HD Audio Visualizer</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-xs px-3 py-1.5 rounded-full bg-violet-950/60 border border-violet-800/40 text-violet-300 font-medium flex items-center gap-2">
+                <span class="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+                Web Engine Active
+            </span>
+        </div>
+    </header>
+
+    <!-- Split Layout: Controls Left / Live Canvas Studio Right -->
+    <main class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+        
+        <!-- Left Side Control Dashboard -->
+        <section class="w-full lg:w-[420px] bg-[#0c0a14] border-r border-violet-950/40 flex flex-col overflow-y-auto h-auto lg:h-[calc(100vh-73px)]">
+            
+            <!-- Tab Navigation for Customizations -->
+            <div class="grid grid-cols-4 border-b border-violet-950/30 text-xs font-sub font-semibold tracking-wider uppercase text-center bg-[#0a0810]">
+                <button onclick="switchTab('audio-tab')" id="btn-audio-tab" class="py-4 border-b-2 border-violet-500 text-violet-400 transition-all">
+                    <i class="fa-solid fa-music block text-base mb-1"></i> Audio
+                </button>
+                <button onclick="switchTab('design-tab')" id="btn-design-tab" class="py-4 border-b-2 border-transparent text-gray-400 hover:text-gray-200 transition-all">
+                    <i class="fa-solid fa-wand-magic-sparkles block text-base mb-1"></i> Vzhľad
+                </button>
+                <button onclick="switchTab('branding-tab')" id="btn-branding-tab" class="py-4 border-b-2 border-transparent text-gray-400 hover:text-gray-200 transition-all">
+                    <i class="fa-solid fa-signature block text-base mb-1"></i> Text/Logo
+                </button>
+                <button onclick="switchTab('export-tab')" id="btn-export-tab" class="py-4 border-b-2 border-transparent text-gray-400 hover:text-gray-200 transition-all">
+                    <i class="fa-solid fa-download block text-base mb-1"></i> Export
+                </button>
+            </div>
+
+            <div class="p-6 flex-1 space-y-6">
+                
+                <!-- TAB 1: AUDIO CONFIGURATION -->
+                <div id="tab-audio-tab" class="space-y-5">
+                    <h3 class="text-base font-futuristic font-semibold text-violet-300 border-b border-violet-950/30 pb-2">Nahráť Hudbu</h3>
+                    
+                    <div class="group relative flex flex-col items-center justify-center border-2 border-dashed border-violet-900/40 hover:border-violet-600/60 bg-violet-950/10 hover:bg-violet-950/20 rounded-xl p-5 text-center cursor-pointer transition-all">
+                        <input type="file" id="audio-input" accept="audio/mp3, audio/wav, audio/mpeg" class="absolute inset-0 opacity-0 cursor-pointer" />
+                        <div class="h-12 w-12 rounded-full bg-violet-950/40 group-hover:bg-violet-900/40 flex items-center justify-center text-violet-400 mb-3 transition-colors">
+                            <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
+                        </div>
+                        <span class="text-sm font-semibold text-gray-200" id="audio-file-name">Vybrať MP3 / WAV súbor</span>
+                        <span class="text-xs text-gray-400 mt-1">Alebo potiahnite sem</span>
+                    </div>
+
+                    <div class="bg-violet-950/20 border border-violet-900/30 rounded-xl p-4 space-y-4">
+                        <div class="flex justify-between items-center">
+                            <label class="text-xs font-sub font-semibold text-violet-300 uppercase tracking-wider">Citlivosť Basov</label>
+                            <span class="text-xs text-violet-400 font-mono" id="bass-sens-val">1.2x</span>
+                        </div>
+                        <input type="range" id="bass-sensitivity" min="0.2" max="3" step="0.1" value="1.2" class="w-full accent-violet-500 bg-violet-950 rounded-lg appearance-none h-1.5 cursor-pointer">
+
+                        <div class="flex justify-between items-center">
+                            <label class="text-xs font-sub font-semibold text-violet-300 uppercase tracking-wider">Citlivosť Výšok</label>
+                            <span class="text-xs text-violet-400 font-mono" id="treble-sens-val">1.0x</span>
+                        </div>
+                        <input type="range" id="treble-sensitivity" min="0.2" max="3" step="0.1" value="1.0" class="w-full accent-violet-500 bg-violet-950 rounded-lg appearance-none h-1.5 cursor-pointer">
+
+                        <div class="flex justify-between items-center">
+                            <label class="text-xs font-sub font-semibold text-violet-300 uppercase tracking-wider">Celková Reaktivita</label>
+                            <span class="text-xs text-violet-400 font-mono" id="global-sens-val">1.0x</span>
+                        </div>
+                        <input type="range" id="global-sensitivity" min="0.1" max="2.5" step="0.1" value="1.0" class="w-full accent-violet-500 bg-violet-950 rounded-lg appearance-none h-1.5 cursor-pointer">
+                    </div>
+                </div>
+
+                <!-- TAB 2: VISUALIZER DESIGN -->
+                <div id="tab-design-tab" class="hidden space-y-5">
+                    <h3 class="text-base font-futuristic font-semibold text-violet-300 border-b border-violet-950/30 pb-2">Dizajn Vizualizéra</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-sub font-semibold text-violet-300 uppercase tracking-wider mb-2">Štýl Sférického Kruhu</label>
+                            <select id="sphere-style" class="w-full bg-[#08070b] border border-violet-900/50 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-violet-500">
+                                <option value="particle-mesh">Sférická sieť (ako NCS)</option>
+                                <option value="solid-ring">Oscilačný pevný kruh</option>
+                                <option value="wave-pulse">Multipulzné vlny</option>
+                                <option value="spiral-galaxy">Špirálová galaxia</option>
+                            </select>
+                        </div>
+
+                        <!-- Color Customizations -->
+                        <div class="bg-violet-950/20 border border-violet-900/30 rounded-xl p-4 space-y-4">
+                            <h4 class="text-xs font-futuristic font-bold text-violet-400">Farby a Žiarenie</h4>
+                            
+                            <div>
+                                <label class="block text-xs font-sub text-gray-300 mb-2">Režim farieb</label>
+                                <select id="color-mode" class="w-full bg-[#08070b] border border-violet-900/50 rounded-lg px-3 py-1.5 text-xs text-gray-200 focus:outline-none focus:border-violet-500">
+                                    <option value="dynamic">Dynamický prechod (Dúhový cyklus)</option>
+                                    <option value="solid">Jedna statická farba</option>
+                                    <option value="ncs-green">Originálna NCS zelená</option>
+                                    <option value="neon-cyber">Neon Cyberpunk (Cyan-Pink)</option>
+                                </select>
+                            </div>
+
+                            <div id="custom-color-container" class="hidden flex items-center justify-between">
+                                <span class="text-xs text-gray-300">Zvoliť farbu</span>
+                                <input type="color" id="primary-color" value="#10b981" class="bg-transparent border-0 cursor-pointer h-8 w-12 rounded">
+                            </div>
+
+                            <div class="flex justify-between items-center">
+                                <label class="text-xs text-gray-300">Sila neonového žiarenia</label>
+                                <span class="text-xs text-violet-400 font-mono" id="glow-val">20px</span>
+                            </div>
+                            <input type="range" id="glow-intensity" min="0" max="50" step="2" value="20" class="w-full accent-violet-500 bg-violet-950 rounded-lg appearance-none h-1.5 cursor-pointer">
+                        </div>
+
+                        <!-- Physics Controls -->
+                        <div class="bg-violet-950/20 border border-violet-900/30 rounded-xl p-4 space-y-4">
+                            <h4 class="text-xs font-futuristic font-bold text-violet-400">Geometrické parametre</h4>
+                            
+                            <div class="flex justify-between items-center">
+                                <label class="text-xs text-gray-300">Základný polomer kruhu</label>
+                                <span class="text-xs text-violet-400 font-mono" id="radius-val">280px</span>
+                            </div>
+                            <input type="range" id="sphere-radius" min="150" max="450" step="10" value="280" class="w-full accent-violet-500 bg-violet-950 rounded-lg appearance-none h-1.5 cursor-pointer">
+
+                            <div class="flex justify-between items-center">
+                                <label class="text-xs text-gray-300">Hustota častíc/bodov</label>
+                                <span class="text-xs text-violet-400 font-mono" id="particle-val">1200</span>
+                            </div>
+                            <input type="range" id="particle-count" min="200" max="3000" step="100" value="1200" class="w-full accent-violet-500 bg-violet-950 rounded-lg appearance-none h-1.5 cursor-pointer">
+
+                            <div class="flex justify-between items-center">
+                                <label class="text-xs text-gray-300">Rýchlosť rotácie</label>
+                                <span class="text-xs text-violet-400 font-mono" id="speed-val">1.0</span>
+                            </div>
+                            <input type="range" id="rotation-speed" min="0" max="4" step="0.2" value="1.0" class="w-full accent-violet-500 bg-violet-950 rounded-lg appearance-none h-1.5 cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: TEXT & LOGO OVERLAYS -->
+                <div id="tab-branding-tab" class="hidden space-y-5">
+                    <h3 class="text-base font-futuristic font-semibold text-violet-300 border-b border-violet-950/30 pb-2">Text &amp; Logo</h3>
+                    
+                    <div class="space-y-4">
+                        <!-- Branding Text Input -->
+                        <div>
+                            <label class="block text-xs font-sub font-semibold text-violet-300 uppercase tracking-wider mb-2">Nickname / Text (ako NCS)</label>
+                            <input type="text" id="branding-text" value="NCS" placeholder="Váš Nickname" class="w-full bg-[#08070b] border border-violet-900/50 rounded-lg px-3 py-2 text-sm text-gray-100 focus:outline-none focus:border-violet-500">
+                        </div>
+
+                        <!-- Layout Selection -->
+                        <div>
+                            <label class="block text-xs font-sub font-semibold text-violet-300 uppercase tracking-wider mb-2">Rozloženie prvkov (Layout)</label>
+                            <select id="layout-mode" class="w-full bg-[#08070b] border border-violet-900/50 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-violet-500">
+                                <option value="split">Vedľa seba (NCS štýl: Text vľavo, Kruh vpravo)</option>
+                                <option value="centered">Centrované (Text / Logo uprostred kruhu)</option>
+                                <option value="text-bottom">Kruh v strede, Text pod kruhom</option>
+                            </select>
+                        </div>
+
+                        <!-- Custom Image Overlay (Logo/Background) -->
+                        <div class="bg-violet-950/20 border border-violet-900/30 rounded-xl p-4 space-y-4">
+                            <h4 class="text-xs font-futuristic font-bold text-violet-400">Vlastné logo / Obrázok</h4>
+                            
+                            <div class="relative flex flex-col items-center justify-center border border-dashed border-violet-900/50 bg-black/30 rounded-lg p-3 text-center cursor-pointer">
+                                <input type="file" id="logo-input" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" />
+                                <span class="text-xs text-gray-300" id="logo-file-name"><i class="fa-solid fa-image mr-1"></i> Nahrať vlastné logo</span>
+                            </div>
+                            
+                            <div class="flex items-center gap-3">
+                                <button onclick="useReferenceImage()" class="flex-1 text-center py-2 bg-violet-950/40 hover:bg-violet-900/50 border border-violet-800/40 rounded-lg text-xs text-violet-300 transition-colors">
+                                    Použiť "sjhdsh.webp"
+                                </button>
+                                <button onclick="clearLogo()" class="px-3 py-2 bg-red-950/20 hover:bg-red-900/30 border border-red-900/40 rounded-lg text-xs text-red-400 transition-colors">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Custom Background Image -->
+                        <div class="bg-violet-950/20 border border-violet-900/30 rounded-xl p-4 space-y-4">
+                            <h4 class="text-xs font-futuristic font-bold text-violet-400">Obrázok na pozadie</h4>
+                            
+                            <div class="relative flex flex-col items-center justify-center border border-dashed border-violet-900/50 bg-black/30 rounded-lg p-3 text-center cursor-pointer">
+                                <input type="file" id="bg-input" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" />
+                                <span class="text-xs text-gray-300" id="bg-file-name"><i class="fa-solid fa-image mr-1"></i> Nahrať pozadie</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-300">Priehľadnosť pozadia</span>
+                                <span class="text-xs text-violet-400 font-mono" id="bg-opacity-val">0.3</span>
+                            </div>
+                            <input type="range" id="bg-opacity" min="0" max="1" step="0.1" value="0.3" class="w-full accent-violet-500 bg-violet-950 rounded-lg appearance-none h-1.5 cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 4: EXPORTING AS 2K MP4 -->
+                <div id="tab-export-tab" class="hidden space-y-5">
+                    <h3 class="text-base font-futuristic font-semibold text-violet-300 border-b border-violet-950/30 pb-2">Export do 2K MP4</h3>
+                    
+                    <div class="bg-violet-950/20 border border-violet-900/30 rounded-xl p-4 space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="h-8 w-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-futuristic font-bold text-gray-200">Kvalita exportu: 2K UHD</h4>
+                                <p class="text-[11px] text-gray-400">Rozlíšenie 2560 x 1440 pixelov, 60 FPS.</p>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-violet-950/40 pt-3 space-y-2">
+                            <p class="text-[11px] text-gray-400 leading-relaxed">
+                                <i class="fa-solid fa-circle-info text-violet-400 mr-1"></i>
+                                Export prebieha v reálnom čase spojením zvukového audio-toku a 2K vykresľovacieho plátna do formátu MP4. Pre najlepší výkon nechajte kartu aktívnu.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Recording Progress UI -->
+                    <div id="recording-status" class="hidden space-y-3 bg-[#0a0810] border border-violet-900/50 rounded-xl p-4">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-gray-300 flex items-center gap-2">
+                                <span class="h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
+                                <span id="record-state-text">Nahráva sa 2K video...</span>
+                            </span>
+                            <span class="text-violet-400 font-mono" id="record-timer">00:00</span>
+                        </div>
+                        <div class="w-full bg-violet-950/60 rounded-full h-1.5 overflow-hidden">
+                            <div id="record-progress" class="bg-gradient-to-r from-violet-500 to-fuchsia-500 h-1.5 rounded-full" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <button id="btn-start-record" onclick="toggleRecording()" disabled class="w-full py-4 rounded-xl font-futuristic font-bold text-sm tracking-wider uppercase transition-all duration-300 bg-violet-600/50 text-violet-300 cursor-not-allowed hover:shadow-lg hover:shadow-violet-500/10 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-circle-play text-red-500"></i> Spustiť Export (Nahraj MP3 prv)
+                        </button>
+                        
+                        <p class="text-[10px] text-center text-gray-400 italic">
+                            *Tlačidlo sa aktivuje ihneď po načítaní ľubovoľného hudobného súboru.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer info branding inside control panel -->
+            <div class="p-6 border-t border-violet-950/40 bg-black/20 text-center">
+                <p class="text-xs text-gray-400">AuraWave Studio v2.4 • Render Engine 2K</p>
+            </div>
+        </section>
+
+        <!-- Right Side: Beautiful Render Screen Panel -->
+        <section class="flex-1 bg-[#050408] flex flex-col justify-between overflow-hidden relative">
+            
+            <!-- Quick Tip overlay -->
+            <div class="absolute top-4 left-4 z-10 hidden sm:flex items-center gap-2 bg-black/60 border border-violet-900/30 px-3 py-1.5 rounded-full text-xs text-violet-300 backdrop-blur-md">
+                <i class="fa-solid fa-expand"></i>
+                <span>Plátno beží natívne v ultra-ostrom <strong>2K (2560x1440)</strong> rozlíšení</span>
+            </div>
+
+            <!-- Render Studio Canvas Viewport Container -->
+            <div class="flex-1 flex items-center justify-center p-4 lg:p-8 relative">
+                <!-- Outer canvas frame keeping a strict 16:9 aspect ratio and full responsiveness -->
+                <div class="w-full max-w-5xl aspect-video rounded-2xl overflow-hidden shadow-2xl shadow-violet-950/20 bg-black border border-violet-900/20 relative group">
+                    
+                    <!-- The Main Canvas - Formatted to 2560x1440 internally (2K resolution) -->
+                    <canvas id="visualizer-canvas" width="2560" height="1440" class="w-full h-full object-contain bg-black"></canvas>
+
+                    <!-- Interactive Play State Indicator -->
+                    <div id="play-overlay" onclick="togglePlayState()" class="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-3 cursor-pointer opacity-100 transition-opacity duration-300">
+                        <div class="h-20 w-20 rounded-full bg-violet-600 hover:bg-violet-500 flex items-center justify-center shadow-lg shadow-violet-500/30 transform group-hover:scale-105 transition-all">
+                            <i class="fa-solid fa-play text-3xl text-white ml-2"></i>
+                        </div>
+                        <span class="text-sm font-futuristic text-violet-200 tracking-wider font-semibold">KLIKNITE PRE PREHRATIE</span>
+                        <span class="text-xs text-gray-400">Najprv hore nahrajte hudbu vo formáte MP3 / WAV</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Custom audio control panel -->
+            <div class="border-t border-violet-950/40 bg-black/40 backdrop-blur-md p-6 flex flex-col gap-4">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                    
+                    <!-- Audio Track Details -->
+                    <div class="flex items-center gap-3 w-full sm:w-1/3">
+                        <div class="h-10 w-10 rounded-lg bg-violet-950/60 border border-violet-900/50 flex items-center justify-center text-violet-400">
+                            <i class="fa-solid fa-music"></i>
+                        </div>
+                        <div class="overflow-hidden">
+                            <h4 id="now-playing-title" class="text-sm font-semibold truncate">Žiadny súbor nebol vybraný</h4>
+                            <p class="text-xs text-gray-400">Pripravený na importovanie hudby</p>
+                        </div>
+                    </div>
+
+                    <!-- Custom Player Controls -->
+                    <div class="flex items-center gap-4">
+                        <button onclick="rewindAudio()" class="h-10 w-10 rounded-full hover:bg-violet-950/40 text-gray-300 hover:text-violet-400 transition-all flex items-center justify-center">
+                            <i class="fa-solid fa-backward text-lg"></i>
+                        </button>
+                        <button id="btn-playback" onclick="togglePlayState()" class="h-14 w-14 rounded-full bg-violet-600 hover:bg-violet-500 shadow-md shadow-violet-500/20 text-white transition-all flex items-center justify-center transform active:scale-95">
+                            <i class="fa-solid fa-play text-xl ml-1" id="play-icon"></i>
+                        </button>
+                        <button onclick="forwardAudio()" class="h-10 w-10 rounded-full hover:bg-violet-950/40 text-gray-300 hover:text-violet-400 transition-all flex items-center justify-center">
+                            <i class="fa-solid fa-forward text-lg"></i>
+                        </button>
+                    </div>
+
+                    <!-- Audio Progress Timeline / Volume -->
+                    <div class="w-full sm:w-1/3 flex items-center gap-4">
+                        <span class="text-xs text-gray-400 font-mono" id="current-time">00:00</span>
+                        <div class="flex-1 relative">
+                            <input type="range" id="timeline" min="0" max="100" value="0" class="w-full accent-violet-500 bg-violet-950/60 rounded-lg appearance-none h-1.5 cursor-pointer">
+                        </div>
+                        <span class="text-xs text-gray-400 font-mono" id="duration-time">00:00</span>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Invisible Audio Element to route and process inside Web Audio API -->
+    <audio id="audio-player" class="hidden"></audio>
+
+    <script>
+        // Core Web Audio State
+        let audioCtx = null;
+        let audioSource = null;
+        let analyser = null;
+        let bufferLength = 0;
+        let dataArray = null;
+        let audioPlaying = false;
+
+        // Recording State & Media Recorder
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let isRecording = false;
+        let recordStartTime = 0;
+        let recordTimerInterval = null;
+        let recordedAudioStreamDest = null;
+
+        // Custom Assets Preloaders
+        let uploadedLogoImage = null;
+        let uploadedBackgroundImage = null;
+
+        // Global Visualizer Parameters
+        const params = {
+            bassSensitivity: 1.2,
+            trebleSensitivity: 1.0,
+            globalSensitivity: 1.0,
+            sphereRadius: 280,
+            particleCount: 1200,
+            rotationSpeed: 1.0,
+            glowIntensity: 20,
+            colorMode: 'dynamic', // 'dynamic', 'solid', 'ncs-green', 'neon-cyber'
+            primaryColor: '#10b981',
+            brandingText: 'NCS',
+            layoutMode: 'split',  // 'split', 'centered', 'text-bottom'
+            bgOpacity: 0.3
+        };
+
+        // DOM elements cache
+        const canvas = document.getElementById('visualizer-canvas');
+        const ctx = canvas.getContext('2d');
+        const audioPlayer = document.getElementById('audio-player');
+        const audioInput = document.getElementById('audio-input');
+        const logoInput = document.getElementById('logo-input');
+        const bgInput = document.getElementById('bg-input');
+        const playOverlay = document.getElementById('play-overlay');
+        const btnPlayback = document.getElementById('btn-playback');
+        const playIcon = document.getElementById('play-icon');
+
+        // Helper: Convert seconds to mm:ss format
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Initialize interactive inputs with real-time feedback updates
+        document.getElementById('bass-sensitivity').addEventListener('input', (e) => {
+            params.bassSensitivity = parseFloat(e.target.value);
+            document.getElementById('bass-sens-val').innerText = params.bassSensitivity.toFixed(1) + 'x';
+        });
+
+        document.getElementById('treble-sensitivity').addEventListener('input', (e) => {
+            params.trebleSensitivity = parseFloat(e.target.value);
+            document.getElementById('treble-sens-val').innerText = params.trebleSensitivity.toFixed(1) + 'x';
+        });
+
+        document.getElementById('global-sensitivity').addEventListener('input', (e) => {
+            params.globalSensitivity = parseFloat(e.target.value);
+            document.getElementById('global-sens-val').innerText = params.globalSensitivity.toFixed(1) + 'x';
+        });
+
+        document.getElementById('glow-intensity').addEventListener('input', (e) => {
+            params.glowIntensity = parseInt(e.target.value);
+            document.getElementById('glow-val').innerText = params.glowIntensity + 'px';
+        });
+
+        document.getElementById('sphere-radius').addEventListener('input', (e) => {
+            params.sphereRadius = parseInt(e.target.value);
+            document.getElementById('radius-val').innerText = params.sphereRadius + 'px';
+        });
+
+        document.getElementById('particle-count').addEventListener('input', (e) => {
+            params.particleCount = parseInt(e.target.value);
+            document.getElementById('particle-val').innerText = params.particleCount;
+        });
+
+        document.getElementById('rotation-speed').addEventListener('input', (e) => {
+            params.rotationSpeed = parseFloat(e.target.value);
+            document.getElementById('speed-val').innerText = params.rotationSpeed.toFixed(1);
+        });
+
+        document.getElementById('bg-opacity').addEventListener('input', (e) => {
+            params.bgOpacity = parseFloat(e.target.value);
+            document.getElementById('bg-opacity-val').innerText = params.bgOpacity.toFixed(1);
+        });
+
+        document.getElementById('branding-text').addEventListener('input', (e) => {
+            params.brandingText = e.target.value;
+        });
+
+        document.getElementById('layout-mode').addEventListener('change', (e) => {
+            params.layoutMode = e.target.value;
+        });
+
+        document.getElementById('color-mode').addEventListener('change', (e) => {
+            params.colorMode = e.target.value;
+            const container = document.getElementById('custom-color-container');
+            if (e.target.value === 'solid') {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        });
+
+        document.getElementById('primary-color').addEventListener('input', (e) => {
+            params.primaryColor = e.target.value;
+        });
+
+        // Tab Switching Engine
+        function switchTab(tabId) {
+            const tabs = ['audio-tab', 'design-tab', 'branding-tab', 'export-tab'];
+            tabs.forEach(t => {
+                const content = document.getElementById('tab-' + t);
+                const button = document.getElementById('btn-' + t);
+                if (t === tabId) {
+                    content.classList.remove('hidden');
+                    button.classList.add('border-violet-500', 'text-violet-400');
+                    button.classList.remove('border-transparent', 'text-gray-400');
+                } else {
+                    content.classList.add('hidden');
+                    button.classList.remove('border-violet-500', 'text-violet-400');
+                    button.classList.add('border-transparent', 'text-gray-400');
+                }
+            });
+        }
+
+        // Custom branding background upload handler
+        bgInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                document.getElementById('bg-file-name').innerText = file.name;
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    uploadedBackgroundImage = new Image();
+                    uploadedBackgroundImage.src = event.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Custom logo upload handler
+        logoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                document.getElementById('logo-file-name').innerText = file.name;
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    uploadedLogoImage = new Image();
+                    uploadedLogoImage.src = event.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Preset reference image initializer
+        function useReferenceImage() {
+            document.getElementById('logo-file-name').innerText = "sjhdsh.webp (Aktivované)";
+            uploadedLogoImage = new Image();
+            uploadedLogoImage.src = "sjhdsh.webp";
+            // Set error fallback to generate a cool visual shape if not loaded
+            uploadedLogoImage.onerror = function() {
+                console.log("Could not load sjhdsh.webp from disk directly. Running clean vector rendering instead.");
+                uploadedLogoImage = null;
+            }
+        }
+
+        // Clear uploaded logo
+        function clearLogo() {
+            uploadedLogoImage = null;
+            document.getElementById('logo-file-name').innerHTML = '<i class="fa-solid fa-image mr-1"></i> Nahrať vlastné logo';
+            logoInput.value = '';
+        }
+
+        // Handle MP3/WAV uploads and parse inside Web Audio Context
+        audioInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                document.getElementById('audio-file-name').innerText = file.name;
+                document.getElementById('now-playing-title').innerText = file.name.replace(/\.[^/.]+$/, "");
+                
+                const url = URL.createObjectURL(file);
+                audioPlayer.src = url;
+                audioPlayer.load();
+
+                // Enable MP4 Recording controls
+                const startRecBtn = document.getElementById('btn-start-record');
+                startRecBtn.disabled = false;
+                startRecBtn.classList.remove('bg-violet-600/50', 'text-violet-300', 'cursor-not-allowed');
+                startRecBtn.classList.add('bg-violet-600', 'hover:bg-violet-500', 'text-white');
+                startRecBtn.innerHTML = '<i class="fa-solid fa-circle-play text-red-500 animate-pulse"></i> Spustiť Export';
+
+                // Setup the HTML media player duration meta
+                audioPlayer.onloadedmetadata = function() {
+                    document.getElementById('duration-time').innerText = formatTime(audioPlayer.duration);
+                };
+            }
+        });
+
+        // Initialize Web Audio Processing Pipeline
+        function initAudioPipeline() {
+            if (audioCtx) return;
+
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioCtx.createAnalyser();
+            
+            // Link media player
+            audioSource = audioCtx.createMediaElementSource(audioPlayer);
+            
+            // Connect timeline analytics
+            audioSource.connect(analyser);
+            
+            // Connect to speakers so user can hear audio normally
+            analyser.connect(audioCtx.destination);
+            
+            // Set Analyser settings for highly dynamic frequency data
+            analyser.fftSize = 512; 
+            bufferLength = analyser.frequencyBinCount;
+            dataArray = new Uint8Array(bufferLength);
+        }
+
+        // Timeline slider controller linkage
+        audioPlayer.addEventListener('timeupdate', () => {
+            if (audioPlayer.duration) {
+                const pct = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+                document.getElementById('timeline').value = pct;
+                document.getElementById('current-time').innerText = formatTime(audioPlayer.currentTime);
+            }
+        });
+
+        document.getElementById('timeline').addEventListener('input', (e) => {
+            if (audioPlayer.duration) {
+                const targetTime = (e.target.value / 100) * audioPlayer.duration;
+                audioPlayer.currentTime = targetTime;
+            }
+        });
+
+        // Toggle sound player active state
+        function togglePlayState() {
+            initAudioPipeline();
+            
+            if (audioPlaying) {
+                audioPlayer.pause();
+                audioPlaying = false;
+                playIcon.className = 'fa-solid fa-play text-xl ml-1';
+                playOverlay.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                audioCtx.resume().then(() => {
+                    audioPlayer.play();
+                    audioPlaying = true;
+                    playIcon.className = 'fa-solid fa-pause text-xl';
+                    playOverlay.classList.add('opacity-0', 'pointer-events-none');
+                });
+            }
+        }
+
+        function rewindAudio() {
+            audioPlayer.currentTime = Math.max(0, audioPlayer.currentTime - 10);
+        }
+
+        function forwardAudio() {
+            audioPlayer.currentTime = Math.min(audioPlayer.duration || 0, audioPlayer.currentTime + 10);
+        }
+
+        // Helper variable for visual physics loops
+        let currentRotationAngle = 0;
+        let colorCycleOffset = 0;
+
+        // Custom responsive styling based on color selection
+        function getComputedVisualColor(idx, maxElements) {
+            if (params.colorMode === 'ncs-green') {
+                return `hsla(140, 90%, 55%, ${0.6 + 0.4 * Math.sin(idx / maxElements)})`;
+            } else if (params.colorMode === 'neon-cyber') {
+                // Alternates dynamic Cyan and Magenta
+                const phase = idx / maxElements;
+                if (idx % 2 === 0) {
+                    return `hsla(185, 100%, 50%, 0.7)`;
+                } else {
+                    return `hsla(320, 100%, 55%, 0.7)`;
+                }
+            } else if (params.colorMode === 'solid') {
+                return params.primaryColor;
+            } else {
+                // Dynamic rotating rainbow/gradient sequence
+                const hue = (idx * (360 / maxElements) + colorCycleOffset) % 360;
+                return `hsla(${hue}, 85%, 60%, 0.8)`;
+            }
+        }
+
+        // Pure 2D Math Canvas Drawing Engine executing at 2K internally
+        function renderScene() {
+            // Setup recursive render loops
+            requestAnimationFrame(renderScene);
+
+            // Fetch live sound frequency datasets
+            let bassEnergy = 0;
+            let midEnergy = 0;
+            let trebleEnergy = 0;
+            let generalEnergySum = 0;
+
+            if (analyser && audioPlaying) {
+                analyser.getByteFrequencyData(dataArray);
+
+                // Split sample frequencies
+                // Bass frequencies indices [0 to 12]
+                for (let i = 0; i < 12; i++) {
+                    bassEnergy += dataArray[i];
+                }
+                bassEnergy /= 12;
+
+                // Mid range indices [13 to 80]
+                for (let i = 13; i < 80; i++) {
+                    midEnergy += dataArray[i];
+                }
+                midEnergy /= 67;
+
+                // Treble frequencies indices [81 to 200]
+                for (let i = 81; i < 200; i++) {
+                    trebleEnergy += dataArray[i];
+                }
+                trebleEnergy /= 119;
+
+                generalEnergySum = (bassEnergy + midEnergy + trebleEnergy) / 3;
+            }
+
+            // Normalise energies based on user custom sensitivity inputs
+            const rawBass = (bassEnergy / 255) * params.bassSensitivity * params.globalSensitivity;
+            const rawMids = (midEnergy / 255) * params.globalSensitivity;
+            const rawTreble = (trebleEnergy / 255) * params.trebleSensitivity * params.globalSensitivity;
+            const baseScale = 1.0 + rawBass * 0.22; // Scale visually pulsing effect
+
+            // Clear the workspace and draw background with absolute sharp graphics
+            ctx.fillStyle = '#050408';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Custom Background image if imported
+            if (uploadedBackgroundImage) {
+                ctx.save();
+                ctx.globalAlpha = params.bgOpacity;
+                // Perfect Aspect Ratio scaling center cover
+                const aspectSrc = uploadedBackgroundImage.width / uploadedBackgroundImage.height;
+                const aspectCanvas = canvas.width / canvas.height;
+                let drawWidth, drawHeight, drawX, drawY;
+
+                if (aspectSrc > aspectCanvas) {
+                    drawHeight = canvas.height;
+                    drawWidth = canvas.height * aspectSrc;
+                    drawX = (canvas.width - drawWidth) / 2;
+                    drawY = 0;
+                } else {
+                    drawWidth = canvas.width;
+                    drawHeight = canvas.width / aspectSrc;
+                    drawX = 0;
+                    drawY = (canvas.height - drawHeight) / 2;
+                }
+                ctx.drawImage(uploadedBackgroundImage, drawX, drawY, drawWidth, drawHeight);
+                ctx.restore();
+            }
+
+            // Slowly increment parameters inside drawing ticks
+            currentRotationAngle += 0.004 * params.rotationSpeed;
+            colorCycleOffset = (colorCycleOffset + 1) % 360;
+
+            // Compute dynamic locations based on Selected Layout Modes
+            let circleCenterX = canvas.width * 0.7; // Default "Split" right coordinate
+            let circleCenterY = canvas.height / 2;
+            let brandingX = canvas.width * 0.22;
+            let brandingY = canvas.height / 2;
+
+            if (params.layoutMode === 'centered') {
+                circleCenterX = canvas.width / 2;
+                circleCenterY = canvas.height / 2;
+                brandingX = canvas.width / 2;
+                brandingY = canvas.height / 2;
+            } else if (params.layoutMode === 'text-bottom') {
+                circleCenterX = canvas.width / 2;
+                circleCenterY = canvas.height * 0.42;
+                brandingX = canvas.width / 2;
+                brandingY = canvas.height * 0.85;
+            }
+
+            // Render advanced 3D Holographic Mesh Orbs Reacting to Frequency bands
+            const currentStyle = document.getElementById('sphere-style').value;
+            
+            ctx.save();
+            ctx.translate(circleCenterX, circleCenterY);
+
+            // Core Glow visual settings
+            if (params.glowIntensity > 0) {
+                ctx.shadowBlur = params.glowIntensity;
+                ctx.shadowColor = getComputedVisualColor(0, 100);
+            }
+
+            if (currentStyle === 'particle-mesh') {
+                // Generates coordinates for a rotating sphere mapped in 3D projection
+                const totalPoints = params.particleCount;
+                
+                for (let index = 0; index < totalPoints; index++) {
+                    // Standard latitude/longitude golden spiral distribution for neat sphere points mapping
+                    const progressRatio = index / totalPoints;
+                    const theta = Math.acos(1 - 2 * progressRatio);
+                    const phi = Math.sqrt(totalPoints * Math.PI) * theta;
+
+                    // Compute clean native coordinates
+                    let radialBase = params.sphereRadius * baseScale;
+                    
+                    // Modulate shape surfaces on latitude values using mids/high frequencies
+                    const surfaceWave = Math.sin(phi * 4 + currentRotationAngle * 10) * rawMids * 15;
+                    const surfaceNoise = Math.cos(theta * 8 + currentRotationAngle * 12) * rawTreble * 10;
+                    
+                    const dynamicRadius = radialBase + surfaceWave + surfaceNoise;
+
+                    // Standard Polar Coordinates in 3D
+                    let x3D = dynamicRadius * Math.sin(theta) * Math.cos(phi);
+                    let y3D = dynamicRadius * Math.sin(theta) * Math.sin(phi);
+                    let z3D = dynamicRadius * Math.cos(theta);
+
+                    // Dynamic rotation on multiple axes over time
+                    const rotationY = currentRotationAngle;
+                    const rotationX = currentRotationAngle * 0.6;
+
+                    // Rotation around Y Axis
+                    let rotX = x3D * Math.cos(rotationY) - z3D * Math.sin(rotationY);
+                    let rotZ = x3D * Math.sin(rotationY) + z3D * Math.cos(rotationY);
+                    let rotY = y3D;
+
+                    // Rotation around X Axis
+                    let finalY = rotY * Math.cos(rotationX) - rotZ * Math.sin(rotationX);
+                    let finalZ = rotY * Math.sin(rotationX) + rotZ * Math.cos(rotationX);
+                    let finalX = rotX;
+
+                    // simple orthographic depth dimension scaling
+                    const depthFactor = (finalZ + params.sphereRadius * 1.5) / (params.sphereRadius * 3);
+                    const pointSize = Math.max(1, depthFactor * 3.5);
+
+                    // Skip drawing points pushed further backwards to optimize neat holographic illusion
+                    ctx.fillStyle = getComputedVisualColor(index, totalPoints);
+                    ctx.globalAlpha = Math.max(0.1, depthFactor);
+                    
+                    ctx.beginPath();
+                    ctx.arc(finalX, finalY, pointSize, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+            } else if (currentStyle === 'solid-ring') {
+                // High performance solid frequency wave ring rendering
+                const steps = 360;
+                ctx.lineWidth = 4 + rawBass * 10;
+                ctx.strokeStyle = getComputedVisualColor(50, 100);
+                ctx.lineJoin = 'round';
+
+                ctx.beginPath();
+                for (let angle = 0; angle <= steps; angle++) {
+                    const radians = (angle * Math.PI) / 180;
+                    
+                    // Link standard analyser arrays mapping circular points
+                    let dataIdx = Math.floor((angle / steps) * (bufferLength / 2));
+                    let freqVal = dataArray ? (dataArray[dataIdx] / 255) : 0;
+                    
+                    let ringOffset = freqVal * 120 * params.globalSensitivity;
+                    let targetRadius = (params.sphereRadius * baseScale) + ringOffset;
+
+                    let px = targetRadius * Math.cos(radians + currentRotationAngle);
+                    let py = targetRadius * Math.sin(radians + currentRotationAngle);
+
+                    if (angle === 0) {
+                        ctx.moveTo(px, py);
+                    } else {
+                        ctx.lineTo(px, py);
+                    }
+                }
+                ctx.closePath();
+                ctx.stroke();
+
+                // Draw secondary inner shadow rings
+                ctx.lineWidth = 1.5;
+                ctx.strokeStyle = getComputedVisualColor(100, 100);
+                ctx.beginPath();
+                for (let angle = 0; angle <= steps; angle++) {
+                    const radians = (angle * Math.PI) / 180;
+                    let innerRadius = (params.sphereRadius * 0.85 * baseScale) - (rawMids * 25);
+                    let px = innerRadius * Math.cos(radians - currentRotationAngle * 1.5);
+                    let py = innerRadius * Math.sin(radians - currentRotationAngle * 1.5);
+                    if (angle === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+                }
+                ctx.closePath();
+                ctx.stroke();
+
+            } else if (currentStyle === 'wave-pulse') {
+                // Overlapping glowing frequency waves creating visual feedback loops
+                const waveCount = 5;
+                const steps = 180;
+
+                for (let j = 0; j < waveCount; j++) {
+                    ctx.lineWidth = 2.5;
+                    ctx.strokeStyle = getComputedVisualColor(j * 40, 200);
+                    ctx.globalAlpha = 0.8 - (j * 0.15);
+                    
+                    ctx.beginPath();
+                    for (let angle = 0; angle <= steps; angle++) {
+                        const radians = (angle * Math.PI) / 90;
+                        const dataIndex = Math.floor((angle / steps) * (bufferLength / 2));
+                        const rawVal = dataArray ? (dataArray[dataIndex] / 255) : 0.05;
+                        
+                        // Generates harmonic spatial waves
+                        const pulseAmpl = Math.sin(radians * 8 + currentRotationAngle * (j + 2)) * rawVal * 80;
+                        const finalRadius = (params.sphereRadius * 0.9 * baseScale) + pulseAmpl;
+
+                        const px = finalRadius * Math.cos(radians);
+                        const py = finalRadius * Math.sin(radians);
+
+                        if (angle === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+                    }
+                    ctx.closePath();
+                    ctx.stroke();
+                }
+
+            } else if (currentStyle === 'spiral-galaxy') {
+                // Galaxy Spiral particles vortex mapping
+                const particleCount = 800;
+                ctx.globalAlpha = 0.95;
+
+                for (let i = 0; i < particleCount; i++) {
+                    const ratio = i / particleCount;
+                    const spiralAngle = ratio * Math.PI * 18 + currentRotationAngle * 2;
+                    const spiralRadius = ratio * params.sphereRadius * baseScale * 1.4;
+
+                    // Frequency modulation
+                    const freqIdx = Math.floor(ratio * (bufferLength / 3));
+                    const waveHeight = dataArray ? (dataArray[freqIdx] / 255) : 0;
+
+                    const pyPhysical = spiralRadius + (waveHeight * 40 * params.globalSensitivity);
+                    
+                    const px = pyPhysical * Math.cos(spiralAngle);
+                    const py = pyPhysical * Math.sin(spiralAngle);
+
+                    ctx.fillStyle = getComputedVisualColor(i, particleCount);
+                    ctx.beginPath();
+                    ctx.arc(px, py, 1.5 + (waveHeight * 4), 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            ctx.restore();
+
+            // Render the text logo overlays (NCS styled next to or inside visualizer)
+            ctx.save();
+            
+            // Render text glow configs
+            if (params.glowIntensity > 0) {
+                ctx.shadowBlur = params.glowIntensity;
+                ctx.shadowColor = getComputedVisualColor(50, 100);
+            }
+
+            if (uploadedLogoImage) {
+                // Centered overlay logo sizing (Circular clipping bounds)
+                const imgSize = params.layoutMode === 'split' ? 140 : params.sphereRadius * 0.7 * baseScale;
+                const lx = params.layoutMode === 'split' ? brandingX - imgSize/2 : circleCenterX - imgSize/2;
+                const ly = params.layoutMode === 'split' ? brandingY - imgSize/2 - 40 : circleCenterY - imgSize/2;
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(lx + imgSize/2, ly + imgSize/2, imgSize/2, 0, Math.PI * 2);
+                ctx.clip();
+                ctx.drawImage(uploadedLogoImage, lx, ly, imgSize, imgSize);
+                ctx.restore();
+
+                // Draw thin decorative circular ring outline around custom logo icon
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = getComputedVisualColor(120, 200);
+                ctx.beginPath();
+                ctx.arc(lx + imgSize/2, ly + imgSize/2, imgSize/2 + 2, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            // Draw clean branding texts
+            if (params.brandingText.trim() !== '') {
+                ctx.fillStyle = '#ffffff';
+                
+                if (params.layoutMode === 'split') {
+                    // Modern NCS font style representation
+                    ctx.font = '900 110px "Orbitron", sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    
+                    const textY = uploadedLogoImage ? brandingY + 120 : brandingY;
+                    ctx.fillText(params.brandingText, brandingX, textY);
+                    
+                    // Stylized bottom decorative dynamic lines
+                    ctx.fillStyle = getComputedVisualColor(10, 100);
+                    const barWidth = 240 + rawBass * 100;
+                    ctx.fillRect(brandingX - barWidth/2, textY + 75, barWidth, 6);
+
+                } else if (params.layoutMode === 'centered' && !uploadedLogoImage) {
+                    // Small branding text placed exactly inside the middle of visualizer sphere
+                    ctx.font = '700 48px "Orbitron", sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(params.brandingText, circleCenterX, circleCenterY);
+
+                } else if (params.layoutMode === 'text-bottom') {
+                    // Large sub-title bar
+                    ctx.font = '900 75px "Orbitron", sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(params.brandingText, brandingX, brandingY);
+
+                    // Dynamic neon indicator bar below
+                    ctx.fillStyle = getComputedVisualColor(120, 200);
+                    const lineBar = 180 + rawMids * 150;
+                    ctx.fillRect(brandingX - lineBar/2, brandingY + 55, lineBar, 4);
+                }
+            }
+
+            ctx.restore();
+        }
+
+        // Video render and recording trigger
+        function toggleRecording() {
+            if (isRecording) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
+        }
+
+        function startRecording() {
+            if (!audioPlayer.src) {
+                alert("Najprv nahrajte audio súbor pre export.");
+                return;
+            }
+
+            isRecording = true;
+            recordedChunks = [];
+
+            // UI configuration
+            const startRecBtn = document.getElementById('btn-start-record');
+            startRecBtn.classList.remove('bg-violet-600', 'hover:bg-violet-500');
+            startRecBtn.classList.add('bg-red-600', 'hover:bg-red-500');
+            startRecBtn.innerHTML = '<i class="fa-solid fa-circle-stop animate-pulse mr-2"></i> Zastaviť &amp; Stiahnuť';
+            
+            document.getElementById('recording-status').classList.remove('hidden');
+            document.getElementById('record-state-text').innerText = "Vykresľujem a nahrávam 2K video...";
+
+            // Ensure Audio Player starts fresh from beginning
+            audioPlayer.currentTime = 0;
+            audioPlayer.play();
+            audioPlaying = true;
+            playIcon.className = 'fa-solid fa-pause text-xl';
+            playOverlay.classList.add('opacity-0', 'pointer-events-none');
+
+            // Setup combined streams: Canvas Video Stream + Audio Node Destination Stream
+            const canvasStream = canvas.captureStream(60); // Record fluidly at 60 FPS in 2K UHD
+            
+            // Build special destination stream context for pure audio tracking
+            if (!audioCtx) initAudioPipeline();
+            
+            recordedAudioStreamDest = audioCtx.createMediaStreamDestination();
+            audioSource.connect(recordedAudioStreamDest);
+
+            // Connect combined visual layers + digital audio feeds into track streams
+            const combinedStream = new MediaStream();
+            canvasStream.getVideoTracks().forEach(track => combinedStream.addTrack(track));
+            recordedAudioStreamDest.stream.getAudioTracks().forEach(track => combinedStream.addTrack(track));
+
+            // Setup recording format options. Fallbacks included for maximum cross-browser support
+            let options = { mimeType: 'video/webm;codecs=vp9,opus', videoBitsPerSecond: 15000000 }; // High 15 Mbps bit-rate for sharp 2K quality
+            if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                options = { mimeType: 'video/webm;codecs=vp8,opus', videoBitsPerSecond: 10000000 };
+                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                    options = { mimeType: 'video/mp4', videoBitsPerSecond: 8000000 };
+                }
+            }
+
+            mediaRecorder = new MediaRecorder(combinedStream, options);
+
+            mediaRecorder.ondataavailable = function(e) {
+                if (e.data && e.data.size > 0) {
+                    recordedChunks.push(e.data);
+                }
+            };
+
+            // Triggered automatically when audio finishes naturally or stopped manually
+            mediaRecorder.onstop = function() {
+                // Clear active recording UI and reset controls
+                isRecording = false;
+                clearInterval(recordTimerInterval);
+                document.getElementById('recording-status').classList.add('hidden');
+                
+                startRecBtn.classList.remove('bg-red-600', 'hover:bg-red-500');
+                startRecBtn.classList.add('bg-violet-600', 'hover:bg-violet-500');
+                startRecBtn.innerHTML = '<i class="fa-solid fa-circle-play text-red-500 animate-pulse"></i> Spustiť Export';
+
+                const blob = new Blob(recordedChunks, { type: 'video/mp4' });
+                const url = URL.createObjectURL(blob);
+                
+                // Prompt direct video browser download file save
+                const downloadLink = document.createElement('a');
+                downloadLink.href = url;
+                const userNickname = params.brandingText.trim() ? params.brandingText : "AuraWave";
+                downloadLink.download = `${userNickname}_Visualizer_2K.mp4`;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+
+                // Disconnect extra recording tracks nodes safely
+                audioSource.disconnect(recordedAudioStreamDest);
+            };
+
+            // Handle timer loops update UI
+            recordStartTime = Date.now();
+            recordTimerInterval = setInterval(() => {
+                const elapsedMs = Date.now() - recordStartTime;
+                const elapsedSecs = elapsedMs / 1000;
+                document.getElementById('record-timer').innerText = formatTime(elapsedSecs);
+                
+                // Display accurate rendering timeline track bar indicators
+                if (audioPlayer.duration) {
+                    const ratio = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+                    document.getElementById('record-progress').style.width = ratio + '%';
+                    
+                    // Stop recording automatically when the MP3 finishes playing
+                    if (audioPlayer.currentTime >= audioPlayer.duration) {
+                        stopRecording();
+                    }
+                }
+            }, 500);
+
+            // Execute recording stream
+            mediaRecorder.start();
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                audioPlayer.pause();
+                audioPlaying = false;
+                playIcon.className = 'fa-solid fa-play text-xl ml-1';
+                playOverlay.classList.remove('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        // Window load wrapper to automatically start canvas frame looping
+        window.onload = function() {
+            renderScene();
+        };
+
+    </script>
+</body>
+</html>
